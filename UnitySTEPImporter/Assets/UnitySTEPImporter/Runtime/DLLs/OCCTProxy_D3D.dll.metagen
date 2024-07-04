@@ -1,0 +1,99 @@
+ImageRuntimeVersion: v4.0.30319
+Assembly OCCTProxy_D3D, Version=0.0.*, Culture=Invariant Language (Invariant Country): 
+	hash=SHA1, flags=PublicKey
+Assembly mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089: 
+	hash=None, flags=None
+Class NCollection_Haft<opencascade::handle<V3d_Viewer> >: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
+    Void .ctor(): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
+  Interfaces:
+    System.IDisposable
+  Methods:
+    op_FunctionCall(): PrivateScope, Public, HideBySig, SpecialName
+    Dispose(): PrivateScope, Public, Final, Virtual, HideBySig
+Class NCollection_Haft<opencascade::handle<V3d_View> >: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
+    Void .ctor(): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
+  Interfaces:
+    System.IDisposable
+  Methods:
+    op_FunctionCall(): PrivateScope, Public, HideBySig, SpecialName
+    Dispose(): PrivateScope, Public, Final, Virtual, HideBySig
+Class NCollection_Haft<opencascade::handle<AIS_InteractiveContext> >: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
+    Void .ctor(): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
+  Interfaces:
+    System.IDisposable
+  Methods:
+    op_FunctionCall(): PrivateScope, Public, HideBySig, SpecialName
+    Dispose(): PrivateScope, Public, Final, Virtual, HideBySig
+Class NCollection_Haft<opencascade::handle<D3DHost_GraphicDriver> >: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
+    Void .ctor(): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
+  Interfaces:
+    System.IDisposable
+  Methods:
+    op_FunctionCall(): PrivateScope, Public, HideBySig, SpecialName
+    Dispose(): PrivateScope, Public, Final, Virtual, HideBySig
+Class OCCTProxyD3D: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
+    Void .ctor(): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
+  Interfaces:
+    System.IDisposable
+  Methods:
+    InitViewer(): PrivateScope, Public, HideBySig
+    ResizeBridgeFBO(Int32, Int32): PrivateScope, Public, HideBySig
+    Dump(TCollection_AsciiString* IsImplicitlyDereferenced): PrivateScope, Public, HideBySig
+    RedrawView(): PrivateScope, Public, HideBySig
+    UpdateView(): PrivateScope, Public, HideBySig
+    SetDegenerateModeOn(): PrivateScope, Public, HideBySig
+    SetDegenerateModeOff(): PrivateScope, Public, HideBySig
+    WindowFitAll(Int32, Int32, Int32, Int32): PrivateScope, Public, HideBySig
+    Place(Int32, Int32, Single): PrivateScope, Public, HideBySig
+    Zoom(Int32, Int32, Int32, Int32): PrivateScope, Public, HideBySig
+    Pan(Int32, Int32): PrivateScope, Public, HideBySig
+    Rotation(Int32, Int32): PrivateScope, Public, HideBySig
+    StartRotation(Int32, Int32): PrivateScope, Public, HideBySig
+    Select(): PrivateScope, Public, HideBySig
+    Select(Int32, Int32, Int32, Int32): PrivateScope, Public, HideBySig
+    MoveTo(Int32, Int32): PrivateScope, Public, HideBySig
+    ShiftSelect(): PrivateScope, Public, HideBySig
+    ShiftSelect(Int32, Int32, Int32, Int32): PrivateScope, Public, HideBySig
+    BackgroundColor(Int32* IsImplicitlyDereferenced, Int32* IsImplicitlyDereferenced, Int32* IsImplicitlyDereferenced): PrivateScope, Public, HideBySig
+    GetBGColR(): PrivateScope, Public, HideBySig
+    GetBGColG(): PrivateScope, Public, HideBySig
+    GetBGColB(): PrivateScope, Public, HideBySig
+    UpdateCurrentViewer(): PrivateScope, Public, HideBySig
+    FrontView(): PrivateScope, Public, HideBySig
+    TopView(): PrivateScope, Public, HideBySig
+    LeftView(): PrivateScope, Public, HideBySig
+    BackView(): PrivateScope, Public, HideBySig
+    RightView(): PrivateScope, Public, HideBySig
+    BottomView(): PrivateScope, Public, HideBySig
+    AxoView(): PrivateScope, Public, HideBySig
+    Scale(): PrivateScope, Public, HideBySig
+    ZoomAllView(): PrivateScope, Public, HideBySig
+    Reset(): PrivateScope, Public, HideBySig
+    SetDisplayMode(Int32): PrivateScope, Public, HideBySig
+    SetColor(Int32, Int32, Int32): PrivateScope, Public, HideBySig
+    GetObjColR(): PrivateScope, Public, HideBySig
+    GetObjColG(): PrivateScope, Public, HideBySig
+    GetObjColB(): PrivateScope, Public, HideBySig
+    ObjectColor(Int32* IsImplicitlyDereferenced, Int32* IsImplicitlyDereferenced, Int32* IsImplicitlyDereferenced): PrivateScope, Public, HideBySig
+    SetBackgroundColor(Int32, Int32, Int32): PrivateScope, Public, HideBySig
+    EraseObjects(): PrivateScope, Public, HideBySig
+    GetOCCVersion(): PrivateScope, Public, HideBySig
+    SetMaterial(Int32): PrivateScope, Public, HideBySig
+    SetTransparency(Int32): PrivateScope, Public, HideBySig
+    IsObjectSelected(): PrivateScope, Public, HideBySig
+    DisplayMode(): PrivateScope, Public, HideBySig
+    SetAISContext(OCCTProxyD3D): PrivateScope, Public, HideBySig
+    GetContext(handle<AIS_InteractiveContext>*): PrivateScope, Public, HideBySig
+    ImportBrep(TCollection_AsciiString* IsImplicitlyDereferenced): PrivateScope, Public, HideBySig
+    ImportBrep(String): PrivateScope, Public, HideBySig
+    ImportStep(TCollection_AsciiString* IsImplicitlyDereferenced): PrivateScope, Public, HideBySig
+    ImportIges(TCollection_AsciiString* IsImplicitlyDereferenced): PrivateScope, Public, HideBySig
+    ExportBRep(TCollection_AsciiString* IsImplicitlyDereferenced): PrivateScope, Public, HideBySig
+    ExportStep(TCollection_AsciiString* IsImplicitlyDereferenced): PrivateScope, Public, HideBySig
+    ExportIges(TCollection_AsciiString* IsImplicitlyDereferenced): PrivateScope, Public, HideBySig
+    ExportVrml(TCollection_AsciiString* IsImplicitlyDereferenced): PrivateScope, Public, HideBySig
+    ExportStl(TCollection_AsciiString* IsImplicitlyDereferenced): PrivateScope, Public, HideBySig
+    TranslateModel(String, Int32, Boolean(HasFieldMarshal)): PrivateScope, Public, HideBySig
+    InitOCCTProxy(): PrivateScope, Public, HideBySig
+    ~OCCTProxyD3D(): PrivateScope, Public, HideBySig
+    Dispose(): PrivateScope, Public, Final, Virtual, HideBySig

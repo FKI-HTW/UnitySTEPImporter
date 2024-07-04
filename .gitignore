@@ -1,15 +1,17 @@
 # Extended version of: https://github.com/github/gitignore/blob/master/Unity.gitignore
 
-# Unity
-[Ll]ibrary/
-[Tt]emp/
-[Oo]bj/
-[Bb]uild/
-[Bb]uilds/
-[Uu][Ww][Pp]/
-[Uu]nity[Pp]ackage[Mm]anager/
-[Ll]ogs/
-[Uu]ser[Ss]ettings/
+# --------------------------------------------------------------------
+# Unity sources
+# --------------------------------------------------------------------
+Unity/[Ll]ibrary/
+Unity/[Tt]emp/
+Unity/[Oo]bj/
+Unity/[Bb]uild/
+Unity/[Bb]uilds/
+Unity/[Uu][Ww][Pp]/
+Unity/[Uu]nity[Pp]ackage[Mm]anager/
+Unity/[Ll]ogs/
+Unity/[Uu]ser[Ss]ettings/
 **/[Aa]ssets/[Aa]sset[Ss]tore[Tt]ools*
 
 # Asset meta data should only be ignored when the corresponding asset is also ignored
@@ -85,3 +87,75 @@ com.unity.textmeshpro
 # Temporary auto-generated Android Assets
 **/[Aa]ssets/[Ss]treamingAssets/aa.meta
 **/[Aa]ssets/[Ss]treamingAssets/aa/*
+
+
+# --------------------------------------------------------------------
+# C++ sources
+# --------------------------------------------------------------------
+*.user
+# ----------------------------------------------
+# GeomKernelBase
+# ----------------------------------------------
+/GeomKernelBase/lib/
+/GeomKernelBase/x64/
+
+# ----------------------------------------------
+# Module_Assembly
+# ----------------------------------------------
+/Module_Assembly/build/
+/Module_Assembly/.vs/
+/Module_Assembly/lib/
+
+# ----------------------------------------------
+# ModuleAssembly_TEST
+# ----------------------------------------------
+/ModuleAssembly_TEST/bild/
+/ModuleAssembly_TEST/bin/
+
+# ----------------------------------------------
+# OCC_Adapter/OCC_Adapter
+# ----------------------------------------------
+/OCC_Adapter/OCC_Adapter/bild/
+/OCC_Adapter/OCC_Adapter/lib/
+
+# ----------------------------------------------
+# OCC_Adapter/OCC_Adapter_TESTS
+# ----------------------------------------------
+/OCC_Adapter/OCC_Adapter_TESTS/bild/
+/OCC_Adapter/OCC_Adapter_TESTS/lib/
+
+# ----------------------------------------------
+# OCC_Adapter/OCC_Adapter_TESTS_main
+# ----------------------------------------------
+/OCC_Adapter/OCC_Adapter_TESTS_main/bild/
+/OCC_Adapter/OCC_Adapter_TESTS_main/bin/
+
+# ----------------------------------------------
+# STEP_Importer
+# ----------------------------------------------
+/STEP_Importer/bin/
+/STEP_Importer/obj/
+/STEP_Importer/DLLs/
+
+# ----------------------------------------------
+# TreeView
+# ----------------------------------------------
+/TreeView/TreeView/TreeView.csproj.user
+/TreeView/TreeView/TreeView.ico
+
+# ----------------------------------------------
+# VENTUS_GeomKernel
+# ----------------------------------------------
+/VENTUS_GeomKernel/.vs/
+/VENTUS_GeomKernel/bild/
+/VENTUS_GeomKernel/dll/
+
+# ----------------------------------------------
+# VENTUS_GeomKernel_TEST
+# ----------------------------------------------
+/VENTUS_GeomKernel_TEST/x64/
+
+# ----------------------------------------------
+# VENTUS_GeomKernelBase_TEST
+# ----------------------------------------------
+/VENTUS_GeomKernelBase_TEST/x64/
