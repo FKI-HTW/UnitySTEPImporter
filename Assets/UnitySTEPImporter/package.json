@@ -1,15 +1,15 @@
 {
     "name": "de.ventus.unitystepimporter",
-    "version": "0.1.0",
-    "displayName": "UnitySTEPImporter",
+    "version": "0.1.1",
+    "displayName": "Unity STEP Importer",
     "description": "",
     "unity": "2022.3",
-    "unityRelease": "11f1",
-    "documentationUrl": "https://github.com/CENTIS-HTW/UnitySTEPImporter/blob/main/Assets/UnitySTEPImporter/README.md",
-    "changelogUrl": "https://github.com/CENTIS-HTW/UnitySTEPImporter/blob/main/Assets/UnitySTEPImporter/CHANGELOG.md",
-    "licensesUrl": "https://github.com/CENTIS-HTW/UnitySTEPImporter/blob/main/Assets/UnitySTEPImporter/LICENSE.md",
+    "documentationUrl": "https://github.com/FKI-HTW/UnitySTEPImporter/blob/main/Assets/UnitySTEPImporter/README.md",
+    "changelogUrl": "https://github.com/FKI-HTW/UnitySTEPImporter/blob/main/Assets/UnitySTEPImporter/CHANGELOG.md",
+    "licensesUrl": "https://github.com/FKI-HTW/UnitySTEPImporter/blob/main/Assets/UnitySTEPImporter/LICENSE.md",
     "keywords": [
-        "Unity Package"
+        "Unity Package",
+        "STEP Importer"
     ],
     "samples": [],
     "author": {
