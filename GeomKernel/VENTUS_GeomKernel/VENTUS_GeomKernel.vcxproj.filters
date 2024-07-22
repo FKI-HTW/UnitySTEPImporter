@@ -1,0 +1,102 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Quelldateien">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Headerdateien">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Ressourcendateien">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Quelldateien\EXPORT">
+      <UniqueIdentifier>{76c33687-d8e9-4ec7-bf19-07ffa76b9819}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Quelldateien\EXPORT\Export_SetUps">
+      <UniqueIdentifier>{928b60b5-c5f4-4fd8-8616-f8c75a0e0e01}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Quelldateien\EXPORT\Export_Preparation">
+      <UniqueIdentifier>{ec1fddc3-0e55-4d0a-9ccd-85a677c9f4a2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headerdateien\EXPORT">
+      <UniqueIdentifier>{e44df846-92de-4767-b9a8-d961f3dc8014}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headerdateien\EXPORT\Export_SetUps">
+      <UniqueIdentifier>{74475988-697e-4ba2-a267-68b833c0abee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headerdateien\EXPORT\Export_Preparation">
+      <UniqueIdentifier>{b4ee7349-24f2-41f2-b72c-d750f773e94a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headerdateien\EXPORT\Export_Preparation\UnityAdaptation">
+      <UniqueIdentifier>{1d3104ec-2f8e-4c31-9e02-c5d8c272416c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Quelldateien\EXPORT\Export_Preparation\UnityAdaptation">
+      <UniqueIdentifier>{d51b2b55-742e-4ce4-b6b6-f6391bc822f3}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\SetUpsGeneral.h">
+      <Filter>Headerdateien\EXPORT\Export_SetUps</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SetUpsToUnity.h">
+      <Filter>Headerdateien\EXPORT\Export_SetUps</Filter>
+    </ClInclude>
+    <!--ClInclude Include="include\AdaptationCoordinateSystem.h">
+      <Filter>Headerdateien\EXPORT\Export_Preparation\edGeUnityAdaptation\Implementation</Filter>
+    </ClInclude-->
+    <!--ClInclude Include="include\AdaptationLengthDimension.h">
+      <Filter>Headerdateien\EXPORT\Export_Preparation\edGeUnityAdaptation\Implementation</Filter>
+    </ClInclude-->
+    <ClInclude Include="include\EnumAdaptation.h">
+      <Filter>Headerdateien\EXPORT\Export_Preparation\UnityAdaptation</Filter>
+    </ClInclude>
+    <ClInclude Include="include\AdaptationFirstIndex.h">
+      <Filter>Headerdateien\EXPORT\Export_Preparation\UnityAdaptation</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ExportAdaptionUtilities.h">
+      <Filter>Headerdateien\EXPORT\Export_Preparation\UnityAdaptation</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Export_GeomKernel.h">
+      <Filter>Headerdateien\EXPORT</Filter>
+    </ClInclude>
+    <ClInclude Include="include\MeshAttributesToExport.h">
+      <Filter>Headerdateien\EXPORT\Export_Preparation</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ModelAttributesToExport.h">
+      <Filter>Headerdateien\EXPORT\Export_Preparation</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\SetUpsToUnity.cpp">
+      <Filter>Quelldateien\EXPORT\Export_SetUps</Filter>
+    </ClCompile>
+    <ClCompile Include="src\EnumAdaptation.cpp">
+      <Filter>Quelldateien\EXPORT\Export_Preparation\UnityAdaptation</Filter>
+    </ClCompile>
+    <ClCompile Include="src\AdaptationFirstIndex.cpp">
+      <Filter>Quelldateien\EXPORT\Export_Preparation\UnityAdaptation</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ExportAdaptionUtilities.cpp">
+      <Filter>Quelldateien\EXPORT\Export_Preparation\UnityAdaptation</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Export_GeomKernel.cpp">
+      <Filter>Quelldateien\EXPORT</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MeshAttributesToExport.cpp">
+      <Filter>Quelldateien\EXPORT\Export_Preparation</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ModelAttributesToExport.cpp">
+      <Filter>Quelldateien\EXPORT\Export_Preparation</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CheckPathString.cpp">
+      <Filter>Quelldateien\EXPORT\Export_Preparation</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="cpp.hint" />
+  </ItemGroup>
+</Project>

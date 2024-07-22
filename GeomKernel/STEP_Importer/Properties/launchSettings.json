@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "StepImporter": {
+      "commandName": "Project",
+      "workingDirectory": "C:\\Users\\admin2\\Desktop\\VENTUS2\\ventus2\\STEP_Importer",
+      "nativeDebugging": true
+    }
+  }
+}
