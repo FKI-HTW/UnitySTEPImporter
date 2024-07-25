@@ -93,18 +93,9 @@ int main() {
         color.DumpJson(cout);
         cout << " |";
         cout << endl;
-       // Handle(TDataStd_TreeNode) T;
-       // if (TDataStd_TreeNode::FindAttribute(label., T)) {
-       //     T->Dump(cout);
-       // }
 
-        //cout << "------------------------------------------------------------------" << endl;
-        //TDF_IDFilter& filter = TDF_IDFilter(false);
         TDF_AttributeIndexedMap attrMap = TDF_AttributeIndexedMap();
-        //label.ExtendedDump(cout, filter, attrMap);
-        //cout << endl;
-        //cout << "------------------------------------------------------------------" << endl;
-        
+
         for (int itrNb = 1; itrNb <= attrMap.Size(); itrNb++) {
             //Handle(TDF_Attribute) 
             auto key = attrMap.FindKey(itrNb);

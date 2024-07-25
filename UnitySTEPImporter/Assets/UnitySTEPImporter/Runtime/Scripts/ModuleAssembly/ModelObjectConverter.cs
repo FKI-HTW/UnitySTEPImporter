@@ -1,107 +1,112 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using VENTUS.StepImporter.UnityExtentions;
 using VENTUS.StepImporter.ModuleAssembly.Model;
 using VENTUS.StepImporter.GeomKernel;
 using VENTUS.StepImporter.ModuleAssembly.Mesh;
 using VENTUS.StepImporter.ModuleAssembly.OldModel;
-using PlasticPipe.PlasticProtocol.Messages;
-using System.Linq;
-using UnityEngine.Rendering;
+using Codice.Client.Commands.TransformerRule;
 
-namespace VENTUS.StepImporter.Assets.UnitySTEPImporter.Runtime.Scripts.ModuleAssembly {
-    public class ModelObjectConverter
-    {
+namespace VENTUS.StepImporter.UnitySTEPImporter.Runtime.Scripts.ModuleAssembly {
+    public class ModelObjectConverter {
 
-        public static Modelobject convertToOldModel(ModelObject modelObject, string path)
-        {
+        public static int SCALE_FACTOR = 1000;
+
+        private static readonly List<double> XMins = new List<double>();
+        private static readonly List<double> XMaxs = new List<double>();
+        private static readonly List<double> YMins = new List<double>();
+        private static readonly List<double> YMaxs = new List<double>();
+        private static readonly List<double> ZMins = new List<double>();
+        private static readonly List<double> ZMaxs = new List<double>();
+        
+        public static Modelobject ConvertToOldModel(ModelObject modelObject, string path) {
             // Modelobject assumes only one root element
-            Modelobject modelobject = initModelProduct(modelObject, path);
-            foreach (ModelBase modelBase in modelObject.RootModels)
-            {
-                if (modelBase.Type == ModelBase.ModelType.PRODUCT)
-                {
-                    Modelproduct modelproduct = transferModelProduct((ModelProduct)modelBase);
+            Modelobject modelobject = InitModelProduct(modelObject, path);
+            foreach (ModelBase modelBase in modelObject.RootModels) {
+                if (modelBase.Type == ModelBase.ModelType.PRODUCT) {
+                    Modelproduct modelproduct = TransferModelProduct((ModelProduct)modelBase);
                     modelobject.Submodels.Add(modelproduct);
-                }
-                else
-                {
-                    Modelpart modelpart = transferModelPart((ModelPart)modelBase);
+                } else {
+                    Modelpart modelpart = TransferModelPart((ModelPart)modelBase);
                     modelobject.Submodels.Add(modelpart);
                 }
             }
+
+            modelobject.Bounds = TransferWholeObjectBounds(modelobject.Transformation);
             return modelobject;
         }
 
-        private static Modelobject initModelProduct(ModelObject modelObject, string path)
-        {
+        private static Bounds TransferWholeObjectBounds(Matrix4x4 transformation) {
+            BoundingBox box = new BoundingBox {
+                mXmin = XMins.Min(),
+                mXmax = XMaxs.Max(),
+                mYmin = YMins.Min(),
+                mYmax = YMaxs.Max(),
+                mZmin = ZMins.Min(),
+                mZmax = ZMaxs.Max()
+            };
+            return TransferBounds(box, transformation);
+        }
+
+        private static void CollectBounds(BoundingBox boundingBox) {
+            XMins.Add(boundingBox.mXmin);
+            XMaxs.Add(boundingBox.mXmax);
+            YMins.Add(boundingBox.mYmin);
+            YMaxs.Add(boundingBox.mYmax);
+            ZMins.Add(boundingBox.mZmin);
+            ZMaxs.Add(boundingBox.mZmin);
+        }
+
+        private static Modelobject InitModelProduct(ModelObject modelObject, string path) {
             Modelobject modelobject = new Modelobject();
             ModelBase firstRoot = modelObject.RootModels[0];
             modelobject.Id = firstRoot.Id;
             modelobject.ObjectManagerId = firstRoot.Id;
-            modelobject.Transformation = transferTransformation(firstRoot.Transformation);
+            modelobject.Transformation = TransferTransformation(firstRoot.Transformation);
             modelobject.Name = firstRoot.Name;
             modelobject.Path = path;
-            modelobject.Bounds = transferBounds(firstRoot.BoundingBox);
+            modelobject.Bounds = TransferBounds(firstRoot.BoundingBox, modelobject.Transformation);
+            CollectBounds(firstRoot.BoundingBox);
             modelobject.CppModelPointer = new IntPtr();
             return modelobject;
         }
 
-        private static Submodel transferModelBase(ModelBase modelBase)
-        {
-            Submodel submodel = new Submodel();
-            submodel.Id = modelBase.Id;
-            submodel.ObjectManagerId = modelBase.Id;
-            submodel.Transformation = transferTransformation(modelBase.Transformation);
-            submodel.Name = modelBase.Name;
-            submodel.Bounds = transferBounds(modelBase.BoundingBox);
-            submodel.CppModelPointer = new IntPtr();
-            submodel.Annotations = new List<string>();
-            return submodel;
-        }
-
-        private static Modelpart transferModelPart(ModelBase modelBase)
-        {
-            //Modelpart modelpart = (Modelpart)transferModelBase(modelBase);
+        private static Modelpart TransferModelPart(ModelBase modelBase) {
             Modelpart modelpart = new Modelpart();
             modelpart.Id = modelBase.Id;
             modelpart.ObjectManagerId = modelBase.Id;
-            modelpart.Transformation = transferTransformation(modelBase.Transformation);
+            modelpart.Transformation = TransferTransformation(modelBase.Transformation);
             modelpart.Name = modelBase.Name;
-            modelpart.Bounds = transferBounds(modelBase.BoundingBox);
+            modelpart.Bounds = TransferBounds(modelBase.BoundingBox, modelpart.Transformation);
+            CollectBounds(modelBase.BoundingBox);
             modelpart.CppModelPointer = new IntPtr();
             modelpart.Annotations = new List<string>();
 
-            modelpart.Modelmesh.Mesh = transferMesh(((ModelPart)modelBase).Meshes);
-            modelpart.Modelmesh.Graphicinfo = transferGraphicInfo(((ModelPart)modelBase).Meshes[0].GraphicInfo);
+            modelpart.Modelmesh.Mesh = TransferMesh(((ModelPart)modelBase).Meshes);
+            modelpart.Modelmesh.Graphicinfo = TransferGraphicInfo(((ModelPart)modelBase).Meshes[0].GraphicInfo);
             return modelpart;
         }
 
-        private static Modelproduct transferModelProduct(ModelProduct modelProduct)
-        {
-            //Modelproduct modelproduct = (Modelproduct)transferModelBase(modelProduct);
+        private static Modelproduct TransferModelProduct(ModelProduct modelProduct) {
             Modelproduct modelproduct = new Modelproduct();
             modelproduct.Id = modelProduct.Id;
             modelproduct.ObjectManagerId = modelProduct.Id;
-            modelproduct.Transformation = transferTransformation(modelProduct.Transformation);
+            modelproduct.Transformation = TransferTransformation(modelProduct.Transformation);
             modelproduct.Name = modelProduct.Name;
-            modelproduct.Bounds = transferBounds(modelProduct.BoundingBox);
+            modelproduct.Bounds = TransferBounds(modelProduct.BoundingBox, modelproduct.Transformation);
+            CollectBounds(modelProduct.BoundingBox);
             modelproduct.CppModelPointer = new IntPtr();
             modelproduct.Annotations = new List<string>();
 
-            if (modelProduct.Childs != null)
-            {
-                foreach (ModelBase modelBase in modelProduct.Childs)
-                {
-                    if (modelBase.Type == ModelBase.ModelType.PRODUCT)
-                    {
-                        Modelproduct modelproductChild = transferModelProduct((ModelProduct)modelBase);
+            if (modelProduct.Childs != null) {
+                foreach (ModelBase modelBase in modelProduct.Childs) {
+                    if (modelBase.Type == ModelBase.ModelType.PRODUCT) {
+                        Modelproduct modelproductChild = TransferModelProduct((ModelProduct)modelBase);
                         modelproduct.Modelproducts.Add(modelproductChild);
-                    }
-                    else
-                    {
-                        Modelpart modelpart = transferModelPart(modelBase);
+                    } else {
+                        Modelpart modelpart = TransferModelPart(modelBase);
                         modelproduct.Modelparts.Add(modelpart);
                     }
                 }
@@ -110,24 +115,21 @@ namespace VENTUS.StepImporter.Assets.UnitySTEPImporter.Runtime.Scripts.ModuleAss
             return modelproduct;
         }
 
-        private static Graphicinfo transferGraphicInfo(GraphicInfo graphicInfo)
-        {
-            UnityEngine.Color color = transferColor(graphicInfo.Color);
+        private static Graphicinfo TransferGraphicInfo(GraphicInfo graphicInfo) {
+            UnityEngine.Color color = TransferColor(graphicInfo.Color);
             Graphicinfo graphicinfoUnity = new Graphicinfo();
             graphicinfoUnity.Color = color;
             graphicinfoUnity.Texture = new Texture2D(1, 1);
             return graphicinfoUnity;
         }
 
-        private static UnityEngine.Color transferColor(VENTUS.StepImporter.ModuleAssembly.Mesh.Color color)
-        {
+        private static UnityEngine.Color TransferColor(VENTUS.StepImporter.ModuleAssembly.Mesh.Color color) {
             UnityEngine.Color unityColor = new UnityEngine.Color(
                 (float)color.Red, (float)color.Green, (float)color.Blue, (float)color.Alpha);
             return unityColor;
         }
 
-        private static Matrix4x4 transferTransformation(System.Numerics.Matrix4x4 trafo)
-        {
+        private static Matrix4x4 TransferTransformation(System.Numerics.Matrix4x4 trafo) {
             Matrix4x4 transformation;
 
             transformation.m00 = trafo.M11;
@@ -153,71 +155,37 @@ namespace VENTUS.StepImporter.Assets.UnitySTEPImporter.Runtime.Scripts.ModuleAss
             return transformation;
         }
 
-        private static EModelType transferModelType(ModelBase.ModelType type)
-        {
+        private static EModelType TransferModelType(ModelBase.ModelType type) {
             EModelType modelType;
-            if (type == ModelBase.ModelType.PRODUCT)
-            {
+            if (type == ModelBase.ModelType.PRODUCT) {
                 modelType = EModelType.ModelProduct;
-            }
-            else
-            {
+            } else {
                 modelType = EModelType.ModelPart;
             }
             return modelType;
         }
 
-        private static Bounds transferBounds(BoundingBox box)
-        {
+        private static Bounds TransferBounds(BoundingBox box, Matrix4x4 transformation) {
             Vector3 center = new Vector3();
-            center.x = (box.mXmax - box.mXmin) / 2;
-            center.y = (box.mYmax - box.mYmin) / 2;
-            center.z = (box.mZmax - box.mZmin) / 2;
+            center.x = (float)(box.mXmax - box.mXmin) / 2;
+            center.y = (float)(box.mZmax - box.mZmin) / 2;
+            center.z = (float)(box.mYmax - box.mYmin) / 2;
 
             Vector3 size = new Vector3();
-            size.x = box.mXmax - box.mXmin;
-            size.y = box.mYmax - box.mYmin;
-            size.z = box.mZmax - box.mZmin;
+            size.x = Mathf.Abs((float)(box.mXmax - box.mXmin));
+            size.y = Mathf.Abs((float)(box.mZmax - box.mZmin));
+            size.z = Mathf.Abs((float)(box.mYmax - box.mYmin));
+
+            // Unity adaptation
+            Vector3 position = transformation.ExtractPosition();
+            center += position;
+            center /= SCALE_FACTOR;
+            size /= SCALE_FACTOR;
 
             return new Bounds(center, size);
         }
 
-        //private static Mesh transferMesh(List<ModelMesh> modelMeshes) {
-        //    Mesh mesh = new Mesh();
-        //    List<Vector3> vertieces = new List<Vector3>();
-        //    List<Coordinate3d> vertiecesNotAdjusted = new List<Coordinate3d>();
-        //    List<int> triangles = new List<int>();
-        //
-        //    foreach (ModelMesh modelMesh in modelMeshes) {
-        //        foreach (Coordinate3d coordinate in modelMesh.Coordinates) {
-        //            // Adjusment to unity
-        //            Vector3 unityCoordinate = new Vector3(-1 * (float)coordinate.X, (float)coordinate.Z, -1 * (float)coordinate.Y) / 1000;
-        //            vertieces.Add(unityCoordinate);
-        //            // just for searching of triangles 
-        //            vertiecesNotAdjusted.Add(coordinate);
-        //        }
-        //    }
-        //
-        //    for (int meshCount = 0; meshCount < modelMeshes.Count; meshCount++) {
-        //        for (int triangleCount = 0; triangleCount < modelMeshes[meshCount].Triangles.Count; triangleCount++) {
-        //            Coordinate3d point1 = modelMeshes[meshCount].Coordinates[modelMeshes[meshCount].Triangles[triangleCount][0]];
-        //            Coordinate3d point2 = modelMeshes[meshCount].Coordinates[modelMeshes[meshCount].Triangles[triangleCount][1]];
-        //            Coordinate3d point3 = modelMeshes[meshCount].Coordinates[modelMeshes[meshCount].Triangles[triangleCount][2]];
-        //            
-        //            triangles.Add(vertiecesNotAdjusted.IndexOf(point1));
-        //            triangles.Add(vertiecesNotAdjusted.IndexOf(point2));
-        //            triangles.Add(vertiecesNotAdjusted.IndexOf(point3));
-        //        }
-        //    }
-        //
-        //    mesh.vertices = vertieces.ToArray();
-        //    mesh.triangles = triangles.ToArray();
-        //    mesh.RecalculateBounds();
-        //    mesh.RecalculateNormals();
-        //    return mesh;
-        //}
-
-        private static Mesh transferMesh(List<ModelMesh> modelMeshes) {
+        private static Mesh TransferMesh(List<ModelMesh> modelMeshes) {
             Mesh mesh = new Mesh();
             List<Vector3> vertieces = new List<Vector3>();
             List<int> triangles = new List<int>();
@@ -231,7 +199,7 @@ namespace VENTUS.StepImporter.Assets.UnitySTEPImporter.Runtime.Scripts.ModuleAss
                 }
                 foreach (Coordinate3d coordinate in modelMesh.Coordinates) {
                     // Adjusment to unity
-                    Vector3 unityCoordinate = new Vector3(-1 * (float)coordinate.X, (float)coordinate.Z, -1 * (float)coordinate.Y) / 1000;
+                    Vector3 unityCoordinate = new Vector3(-1 * (float)coordinate.X, (float)coordinate.Z, -1 * (float)coordinate.Y) / SCALE_FACTOR;
                     vertieces.Add(unityCoordinate);
                     coordCount++;
                 }
@@ -239,7 +207,6 @@ namespace VENTUS.StepImporter.Assets.UnitySTEPImporter.Runtime.Scripts.ModuleAss
 
             mesh.vertices = vertieces.ToArray();
             mesh.triangles = triangles.ToArray();
-            // new int[] { 1, 0, 2, 1, 2, 3, 4, 5, 6, 6, 5, 7, 11, 9, 8, 11, 8, 10, 13, 15, 12, 12, 15, 14, 19, 17, 16, 19, 16, 18, 21, 23, 20, 20, 23, 22 };
             mesh.RecalculateBounds();
             mesh.RecalculateNormals();
 

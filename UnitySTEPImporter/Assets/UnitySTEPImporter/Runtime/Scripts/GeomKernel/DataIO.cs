@@ -5,7 +5,7 @@ namespace VENTUS.StepImporter.GeomKernel
     [StructLayout(LayoutKind.Sequential, Size = 24)]
     public struct BoundingBox
     {
-        public float mXmin, mYmin, mZmin, mXmax, mYmax, mZmax;
+        public double mXmin, mYmin, mZmin, mXmax, mYmax, mZmax;
     };
 
     public enum ResultFileLoading

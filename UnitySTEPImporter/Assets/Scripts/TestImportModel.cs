@@ -6,7 +6,7 @@ using VENTUS.StepImporter.GeomKernel;
 using VENTUS.StepImporter.UnityExtentions;
 using VENTUS.StepImporter.ModuleAssembly.Mesh;
 using static VENTUS.StepImporter.ModuleAssembly.Model.ModelBase;
-using VENTUS.StepImporter.Assets.UnitySTEPImporter.Runtime.Scripts.ModuleAssembly;
+using VENTUS.StepImporter.UnitySTEPImporter.Runtime.Scripts.ModuleAssembly;
 using VENTUS.StepImporter.ModuleAssembly.OldModel;
 
 public class TestImportModel : MonoBehaviour
@@ -23,41 +23,45 @@ public class TestImportModel : MonoBehaviour
 
 	private Bounds _originalBounds;
 	private Bounds _scaledBounds;
+    private Modelobject _modelobject;
 
-	private void OnDrawGizmos()
-	{
-		if (_drawOriginalBoundingBox)
-		{
+	private void OnDrawGizmos() {
+		if (_drawOriginalBoundingBox) {
 			Gizmos.color = UnityEngine.Color.red;
 			Gizmos.DrawWireCube(_originalBounds.center, _originalBounds.size);
 		}
-		if (_drawScaledBoundingBox)
-		{
+		if (_drawScaledBoundingBox) {
 			Gizmos.color = UnityEngine.Color.green;
 			Gizmos.DrawWireCube(_scaledBounds.center, _scaledBounds.size);
 		}
-	}
+        if (_modelobject != null) {
+            foreach (Submodel submodel in _modelobject.Submodels) {
+                Gizmos.color = UnityEngine.Color.blue;
+                Gizmos.DrawWireCube(submodel.Bounds.center, submodel.Bounds.size);
+            }
+        }
+    }
 
 	public void ImportModel() {
 
         ImportModuleAssembly modAss = new ImportModuleAssembly(2);
         ModelObject modelObject = modAss.transferModelObject(_path);
-        Modelobject modelobject = ModelObjectConverter.convertToOldModel(modelObject, _path);
+        _modelobject = ModelObjectConverter.ConvertToOldModel(modelObject, _path);
 
-        if (modelobject == null)
+        if (_modelobject == null)
             return;
 
-        _originalBounds = modelobject.Bounds;
-        modelobject = AutoPositionAndScaleModel(modelobject, _bounds);
-        _scaledBounds = modelobject.Bounds;
+        _originalBounds = _modelobject.Bounds;
+        //modelobject = AutoPositionAndScaleModel(modelobject, _bounds);
+        _scaledBounds = _modelobject.Bounds;
 
-        modelobject.ObjectManagerId = 0;
-        modelobject.Path = _path;
+        _modelobject.ObjectManagerId = 0;
+        _modelobject.Path = _path;
 
-        foreach (Submodel submodel in modelobject.Submodels)
+        foreach (Submodel submodel in _modelobject.Submodels) 
             SetObjectManagerID(submodel, 0);
 
-        SpawnModel(modelobject);
+        SpawnModel(_modelobject);
     }
 
     private Modelobject AutoPositionAndScaleModel(Modelobject modelobject, Bounds scaleBounds)
