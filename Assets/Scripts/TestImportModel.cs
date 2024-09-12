@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
-using VENTUS.UnitySTEPImporter.DataIO;
+using VENTUS.ModelImporter;
 using VENTUS.UnitySTEPImporter.UnityExtentions;
 
 public class TestImportModel : MonoBehaviour
@@ -13,185 +13,93 @@ public class TestImportModel : MonoBehaviour
 	[SerializeField] private GameObject _modelProductPrefab;
 	[SerializeField] private GameObject _modelPartPrefab;
 
-	[SerializeField] private bool _drawOriginalBoundingBox;
-	[SerializeField] private bool _drawScaledBoundingBox;
+	[SerializeField] private bool _drawOriginalBoundingBoxes;
+	[SerializeField] private bool _drawTransformedBoundingBoxes;
 
-	private Bounds _originalBounds;
-	private Bounds _scaledBounds;
+	private List<Bounds> _originalBounds = new();
+	private List<Bounds> _transformedBounds = new();
 
 	private void OnDrawGizmos()
 	{
-		if (_drawOriginalBoundingBox)
-		{
-			Gizmos.color = Color.red;
-			Gizmos.DrawWireCube(_originalBounds.center, _originalBounds.size);
-		}
-		if (_drawScaledBoundingBox)
-		{
-			Gizmos.color = Color.green;
-			Gizmos.DrawWireCube(_scaledBounds.center, _scaledBounds.size);
-		}
+		if (_drawOriginalBoundingBoxes)
+         foreach (Bounds submodelBounds in _originalBounds)
+         {
+            Gizmos.color = UnityEngine.Color.red;
+            Gizmos.DrawWireCube(submodelBounds.center, submodelBounds.size);
+         }
+      if (_drawTransformedBoundingBoxes)
+			foreach (Bounds submodelBounds in _transformedBounds)
+			{
+				Gizmos.color = UnityEngine.Color.blue;
+				Gizmos.DrawWireCube(submodelBounds.center, submodelBounds.size);
+			}
 	}
 
 	public void ImportModel()
 	{
-		ImportModel importModel = new();
-		importModel.InitGeomKernel();
+      _originalBounds.Clear();
+		_transformedBounds.Clear();
 
-		int objectManagerId = importModel.LoadModelobjectFromFile(_path, 4);
-		Modelobject modelobject = importModel.getModelobjectFromKernel(objectManagerId);
-
-		if (modelobject == null)
+      ModelObjectData modelObjectData = STEPImporter.ParseFile(_path);
+		if (modelObjectData == null)
+		{
+			Debug.LogError("Something went wrong while creating the model!");
 			return;
-
-		_originalBounds = modelobject.Bounds;
-		modelobject = AutoPositionAndScaleModel(modelobject, _bounds);
-		_scaledBounds = modelobject.Bounds;
-
-		modelobject.ObjectManagerId = objectManagerId;
-		modelobject.Path = _path;
-
-		foreach (Submodel submodel in modelobject.Submodels)
-			SetObjectManagerID(submodel, objectManagerId);
-
-		SpawnModel(modelobject);
-	}
-
-	private Modelobject AutoPositionAndScaleModel(Modelobject modelobject, Bounds scaleBounds)
-	{
-		Vector3 position = modelobject.Transformation.ExtractPosition();
-		Quaternion rotation = modelobject.Transformation.ExtractRotation();
-		Vector3 scale = modelobject.Transformation.ExtractScale();
-
-		Bounds bounds = new Bounds(modelobject.Bounds.center, modelobject.Bounds.size);
-		bounds.center += position;
-
-		if (scaleBounds.center != modelobject.Bounds.center)
-		{
-			Vector3 offCenter = bounds.center - scaleBounds.center;
-			offCenter.y = 0.0f;
-
-			bounds.center -= offCenter;
-
-			position -= offCenter;
 		}
 
-		if (!(scaleBounds.size.x >= modelobject.Bounds.size.x) ||
-			!(scaleBounds.size.y >= modelobject.Bounds.size.y) ||
-			!(scaleBounds.size.z >= modelobject.Bounds.size.z))
-		{
-			float overScaleFactor = 1.0f;
-
-			overScaleFactor = Mathf.Min(overScaleFactor, scaleBounds.size.x / modelobject.Bounds.size.x);
-			overScaleFactor = Mathf.Min(overScaleFactor, scaleBounds.size.y / modelobject.Bounds.size.y);
-			overScaleFactor = Mathf.Min(overScaleFactor, scaleBounds.size.z / modelobject.Bounds.size.z);
-
-			bounds.size *= overScaleFactor;
-			scale *= overScaleFactor;
-		}
-
-		position.y = bounds.extents.y;
-		bounds.center = new Vector3(bounds.center.x, position.y, bounds.center.z);
-
-		modelobject.Bounds = bounds;
-		modelobject.Transformation = Matrix4x4.TRS(position, rotation, scale);
-
-		return modelobject;
+		SpawnModel(modelObjectData);
 	}
 
-
-	private void SetObjectManagerID(Submodel submodel, int objectManagerId)
+	private void SpawnModel(ModelObjectData modelObjectData)
 	{
-		submodel.ObjectManagerId = objectManagerId;
-
-		if (submodel.GetType() == typeof(Modelproduct))
-		{
-			Modelproduct modelproduct = (Modelproduct)submodel;
-
-			foreach (Modelproduct mp in modelproduct.Modelproducts)
-				SetObjectManagerID(mp, objectManagerId);
-
-			foreach (Modelpart mp in modelproduct.Modelparts)
-				SetObjectManagerID(mp, objectManagerId);
-		}
-	}
-
-	private GameObject SpawnModel(Modelobject modelobject, Transform transformation = null)
-	{
-		GameObject go = Instantiate(_modelObjectPrefab);
-
+      // spawn parent
+      GameObject go = Instantiate(_modelObjectPrefab);
 		ModelContainer modelContainer = go.GetComponent<ModelContainer>();
-		if (transformation != null)
-			modelContainer.Transformation = Matrix4x4.TRS(transformation.position, transformation.rotation, transformation.localScale);
-		else
-			modelContainer.Transformation = modelobject.Transformation;
-		modelContainer.ModelType = ModelType.Modelobject;
-		modelContainer.Id = modelobject.Id;
-		modelContainer.ObjectManagerId = modelobject.ObjectManagerId;
-		modelContainer.Name = modelobject.Name;
-		modelContainer.Path = modelobject.Path;
-		modelContainer.LoD = 2;
-		modelContainer.Mesh = null;
-		modelContainer.Color = Color.white;
-		modelContainer.Texture = null;
-		modelContainer.CppModelPointer = modelobject.CppModelPointer;
-		modelContainer.Initialise();
+		modelContainer.InitializeFromData(modelObjectData, _path);
 
-		foreach (Submodel submodel in modelobject.Submodels)
-			SpawnSubModel(submodel, go, modelContainer);
-
-		return go;
+      // spawn children
+      foreach (var child in modelObjectData.Children)
+			SpawnSubModel(child, modelContainer);
 	}
 
-	private void SpawnSubModel(Submodel submodel, GameObject parent, ModelContainer container)
+	private void SpawnSubModel(ModelObjectData modelObjectData, ModelContainer parentContainer)
 	{
-		if (submodel.GetType() == typeof(Modelpart))
+      _originalBounds.Add(modelObjectData.Bounds);
+		GameObject go;
+
+		switch (modelObjectData.ModelType)
 		{
-			Modelpart modelpart = (Modelpart)submodel;
+			case EModelType.ModelPart:
+				go = Instantiate(_modelPartPrefab, parentContainer.transform);
+				break;
 
-			GameObject go = Instantiate(_modelPartPrefab, parent.transform);
+			case EModelType.ModelProduct:
+				go = Instantiate(_modelProductPrefab, parentContainer.transform);
+				break;
 
-			ModelContainer modelContainer = go.GetComponent<ModelContainer>();
-			modelContainer.ModelParent = container;
-			modelContainer.ModelType = ModelType.Modelpart;
-			modelContainer.Id = modelpart.Id;
-			modelContainer.ObjectManagerId = modelpart.ObjectManagerId;
-			modelContainer.Name = modelpart.Name;
-			modelContainer.Transformation = modelpart.Transformation;
-			modelContainer.LoD = 2;
-			modelContainer.Mesh = modelpart.Modelmesh.Mesh;
-			modelContainer.Color = modelpart.Modelmesh.Graphicinfo.Color;
-			modelContainer.Texture = modelpart.Modelmesh.Graphicinfo.Texture;
-			modelContainer.CppModelPointer = modelpart.CppModelPointer;
-			modelContainer.Initialise();
+			default:
+				go = null;
+				break;
 		}
-		else if (submodel.GetType() == typeof(Modelproduct))
+		if (go != null) 
 		{
-			Modelproduct modelproduct = (Modelproduct)submodel;
+				go.transform.FromMatrix(modelObjectData.Transformation);
+				ModelContainer modelContainer = go.GetComponent<ModelContainer>();
+				modelContainer.InitializeFromData(modelObjectData, _path, parentContainer);
+            _transformedBounds.Add(TransformBounds(go.transform, modelObjectData.Bounds));
 
-			GameObject go = Instantiate(_modelProductPrefab, parent.transform);
-
-			ModelContainer modelContainer = go.GetComponent<ModelContainer>();
-			modelContainer.ModelParent = container;
-			modelContainer.ModelType = ModelType.Modelproduct;
-			modelContainer.Id = modelproduct.Id;
-			modelContainer.ObjectManagerId = modelproduct.ObjectManagerId;
-			modelContainer.Name = modelproduct.Name;
-			modelContainer.Transformation = modelproduct.Transformation;
-			modelContainer.LoD = 2;
-			modelContainer.Mesh = null;
-			modelContainer.Color = Color.white;
-			modelContainer.Texture = null;
-			modelContainer.CppModelPointer = modelproduct.CppModelPointer;
-			modelContainer.Initialise();
-
-			foreach (Modelproduct mp in modelproduct.Modelproducts)
-				SpawnSubModel(mp, go, container);
-
-			foreach (Modelpart mp in modelproduct.Modelparts)
-				SpawnSubModel(mp, go, container);
+            foreach (var child in modelObjectData.Children)
+		         SpawnSubModel(child, modelContainer);
 		}
 	}
+
+	private Bounds TransformBounds(Transform transform, Bounds bounds)
+	{
+		Vector3 centerTransformed = transform.TransformPoint(bounds.center);
+		Vector3 sizeTransformed = transform.TransformDirection(bounds.size);
+
+      return new Bounds(centerTransformed, sizeTransformed);
+   }
 }
 
 [CustomEditor(typeof(TestImportModel))]
