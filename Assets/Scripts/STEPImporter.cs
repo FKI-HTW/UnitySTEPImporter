@@ -181,7 +181,7 @@ namespace VENTUS.ModelImporter
             IntPtr cppGraphicInfo = ImportGeomKernel.getGraphicInfo(cppMesh);
             RGBAColor color = new();
             ImportGeomKernel.getColor(cppGraphicInfo, ref color);
-            return new Color((float)color.mR, (float)color.mB, (float)color.mG, (float)color.mA);
+            return new Color((float)color.mR, (float)color.mG, (float)color.mB, (float)color.mA);
          }
          return new Color();
       }
